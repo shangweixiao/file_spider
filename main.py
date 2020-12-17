@@ -92,9 +92,10 @@ def SyncFile(data):
         os.system("mkdir -p " + localdir)
 
     print("Downloading... " + str(round(SyncFile.size/1024/1024,2)) + "/" + str(round(GetAllSize.size/1024/1024,2)) + " (MB) " + data.parent + data.link + "," + str(round(data.size/1024,2)) + "KB")
-    r = requests.get(data.parent + data.link)
-    with open(localdir+data.name,"wb") as f:
-        f.write(r.content)
+    if not os.path.exists(localdir+data.name):
+        r = requests.get(data.parent + data.link)
+        with open(localdir+data.name,"wb") as f:
+            f.write(r.content)
     SyncFile.size = SyncFile.size + data.size
 
 def EnumerateFileInDirectory(url,recursion,fn=None,exclude=None):
@@ -108,7 +109,7 @@ def EnumerateFileInDirectory(url,recursion,fn=None,exclude=None):
         data = find.NextFile()
        
 if __name__ == "__main__":
-    exclude = ['Cloud','Container','Silverblue','Spins','armhfp','iso','aarch64']
+    exclude = ['Cloud','Container','Silverblue','Spins','armhfp','iso','aarch64','source','images','isolinux','EFI']
     EnumerateFileInDirectory("https://mirrors.sohu.com/fedora/releases/29/",True,GetAllSize,exclude)
     EnumerateFileInDirectory("https://mirrors.sohu.com/fedora/updates/29/",True,GetAllSize,exclude)
     print(str(round(GetAllSize.size/1024/1024,2)) + " (MB)")
